@@ -1,14 +1,9 @@
-﻿namespace MyShape
+﻿using System.Drawing;
+
+namespace MyShape
 {
-    class Circle : Shape
+    class Circle : Shape // Concrete shape class representing a circle
     {
-        public int radius;
-        public override void Draw(Graphics g) //Переопределение для рисования
-        {
-            using (Pen pen = new Pen(color))
-            {
-                g.DrawEllipse(pen, x, y, radius, radius);
-            }
-        }
+        public Circle() { }
     }
 }

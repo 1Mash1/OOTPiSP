@@ -1,14 +1,10 @@
-﻿namespace MyShape
+﻿using MyShape;
+using System.Drawing;
+
+namespace MyShape
 {
-    class Elipse : Circle
+    class Elipse : Circle // Concrete shape class representing an elipse
     {
-        public int height;
-        public override void Draw(Graphics g)
-        {
-            using (Pen pen = new Pen(color))
-            {
-                g.DrawEllipse(pen, x, y, radius * 2, height);
-            }
-        }
+        public Elipse() { }
     }
 }

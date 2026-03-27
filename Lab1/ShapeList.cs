@@ -2,17 +2,23 @@
 {
     class ShapeList
     {
-        private List<Shape> list = new List<Shape>(); //Список объектов (фигур)
-        public void Add(Shape shape) //Метод для добавления фигуры в список
+        private List<Shape> list = new List<Shape>(); // Internal storage for shapes
+
+        public void Add(Shape shape) // Adds a new shape to the collection
         {
             list.Add(shape);
         }
 
-        public void DrawAll(Graphics g) //Метод для отрисовки всех фигур
+        public List<Shape> GetList() // Returns the full list of shapes
+        {
+            return list;
+        }
+
+        public void DrawAll(Graphics graphics)
         {
             foreach (var shape in list)
             {
-                shape.Draw(g);
+                shape.DrawStrategy.Draw(graphics, shape); // Polymorphic call: how to draw the shape
             }
         }
     }
