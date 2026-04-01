@@ -1,21 +1,29 @@
-﻿using System;
-using System.Drawing;
-
-namespace MyShape
+﻿namespace MyShape
 {
-    public class ElipseDrawStrategy : IDrawStrategy // Concrete strategy class that implements drawing logic for an elipse
+    class ElipseDrawStrategy : IDrawStrategy
     {
         public void Draw(Graphics graphics, Shape shape)
         {
-            using (Pen pen = new Pen(shape.color))
+            using (Pen pen = new Pen(shape.color, 2))
             {
-                int left, top, width, height;
-                left = Math.Min(shape.x, shape.x2);
-                top = Math.Min(shape.y, shape.y2);
-                width = Math.Abs(shape.x - shape.x2);
-                height = Math.Abs(shape.y - shape.y2);
-                graphics.DrawEllipse(pen, left, top, width, height);
+                Rectangle bounds = GetBounds(shape);
+                graphics.DrawEllipse(pen, bounds);
             }
+        }
+
+        public Rectangle GetBounds(Shape shape)
+        {
+            int left, top, width, height;
+            left = Math.Min(shape.x, shape.x2);
+            top = Math.Min(shape.y, shape.y2);
+            width = Math.Abs(shape.x2 - shape.x);
+            height = Math.Abs(shape.y2 - shape.y);
+            return new Rectangle(left, top, width, height);
+        }
+
+        public bool ContainsPoint(Shape shape, int pointX, int pointY)
+        {
+            return GetBounds(shape).Contains(pointX, pointY);
         }
     }
 }

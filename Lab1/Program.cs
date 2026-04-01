@@ -1,4 +1,7 @@
-﻿namespace MyShape
+﻿using System;
+using System.Windows.Forms;
+
+namespace MyShape
 {
     static class Program
     {

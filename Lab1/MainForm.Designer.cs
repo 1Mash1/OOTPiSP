@@ -30,6 +30,8 @@
         {
             canvas = new PictureBox();
             panel1 = new Panel();
+            btnLoad = new Button();
+            btnSave = new Button();
             btnSelectColor = new Button();
             btnClearCanvas = new Button();
             btnTriangle = new Button();
@@ -60,6 +62,8 @@
             // panel1
             // 
             panel1.BackColor = Color.Pink;
+            panel1.Controls.Add(btnLoad);
+            panel1.Controls.Add(btnSave);
             panel1.Controls.Add(btnSelectColor);
             panel1.Controls.Add(btnClearCanvas);
             panel1.Controls.Add(btnTriangle);
@@ -74,12 +78,38 @@
             panel1.Size = new Size(1082, 125);
             panel1.TabIndex = 1;
             // 
+            // btnLoad
+            // 
+            btnLoad.BackColor = Color.Orchid;
+            btnLoad.FlatStyle = FlatStyle.Flat;
+            btnLoad.Font = new Font("Forte", 16F);
+            btnLoad.Location = new Point(784, 67);
+            btnLoad.Name = "btnLoad";
+            btnLoad.Size = new Size(100, 45);
+            btnLoad.TabIndex = 9;
+            btnLoad.Text = "Load";
+            btnLoad.UseVisualStyleBackColor = false;
+            btnLoad.Click += btnLoad_Click;
+            // 
+            // btnSave
+            // 
+            btnSave.BackColor = Color.Orchid;
+            btnSave.FlatStyle = FlatStyle.Flat;
+            btnSave.Font = new Font("Forte", 16F);
+            btnSave.Location = new Point(784, 12);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(100, 45);
+            btnSave.TabIndex = 8;
+            btnSave.Text = "Save";
+            btnSave.UseVisualStyleBackColor = false;
+            btnSave.Click += btnSave_Click;
+            // 
             // btnSelectColor
             // 
             btnSelectColor.BackColor = Color.Orchid;
             btnSelectColor.FlatStyle = FlatStyle.Flat;
             btnSelectColor.Font = new Font("Forte", 16F);
-            btnSelectColor.Location = new Point(941, 42);
+            btnSelectColor.Location = new Point(941, 6);
             btnSelectColor.Name = "btnSelectColor";
             btnSelectColor.Size = new Size(100, 45);
             btnSelectColor.TabIndex = 7;
@@ -92,7 +122,7 @@
             btnClearCanvas.BackColor = Color.Orchid;
             btnClearCanvas.FlatStyle = FlatStyle.Flat;
             btnClearCanvas.Font = new Font("Forte", 16F);
-            btnClearCanvas.Location = new Point(791, 42);
+            btnClearCanvas.Location = new Point(941, 67);
             btnClearCanvas.Name = "btnClearCanvas";
             btnClearCanvas.Size = new Size(100, 45);
             btnClearCanvas.TabIndex = 6;
@@ -178,7 +208,7 @@
             MaximizeBox = false;
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "ООТПиСП ЛБ2 451003 Харкевич";
+            Text = "ООТПиСП ЛБ3 451003 Харкевич";
             ((System.ComponentModel.ISupportInitialize)canvas).EndInit();
             panel1.ResumeLayout(false);
             ResumeLayout(false);
@@ -197,5 +227,7 @@
         private Button btnClearCanvas;
         private Button btnSelectColor;
         private ColorDialog colorDialog;
+        private Button btnLoad;
+        private Button btnSave;
     }
 }
