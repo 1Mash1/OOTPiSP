@@ -43,7 +43,11 @@
             сохранитьToolStripMenuItem = new ToolStripMenuItem();
             очиститьTobtnSelectColorolStripMenuItem = new ToolStripMenuItem();
             плагToolStripMenuItem = new ToolStripMenuItem();
+            загрузитьФигуруToolStripMenuItem = new ToolStripMenuItem();
+            зашрузитьФункционалToolStripMenuItem = new ToolStripMenuItem();
             btnSelectColor = new ToolStripMenuItem();
+            encryptionToolStripMenuItem = new ToolStripMenuItem();
+            отключитьToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)canvas).BeginInit();
             flowPanel.SuspendLayout();
             menuStrip1.SuspendLayout();
@@ -67,7 +71,7 @@
             // 
             btnTriangle.BackColor = Color.LightSkyBlue;
             btnTriangle.Image = Properties.Resources.triangle;
-            btnTriangle.Location = new Point(537, 3);
+            btnTriangle.Location = new Point(873, 3);
             btnTriangle.Name = "btnTriangle";
             btnTriangle.Size = new Size(60, 60);
             btnTriangle.TabIndex = 5;
@@ -78,7 +82,7 @@
             // 
             btnElipse.BackColor = Color.LightSkyBlue;
             btnElipse.Image = Properties.Resources.elipse;
-            btnElipse.Location = new Point(669, 3);
+            btnElipse.Location = new Point(1005, 3);
             btnElipse.Name = "btnElipse";
             btnElipse.Size = new Size(60, 60);
             btnElipse.TabIndex = 4;
@@ -89,7 +93,7 @@
             // 
             btnSquare.BackColor = Color.LightSkyBlue;
             btnSquare.Image = Properties.Resources.square;
-            btnSquare.Location = new Point(471, 3);
+            btnSquare.Location = new Point(807, 3);
             btnSquare.Name = "btnSquare";
             btnSquare.Size = new Size(60, 60);
             btnSquare.TabIndex = 3;
@@ -101,7 +105,7 @@
             btnCircle.BackColor = Color.LightSkyBlue;
             btnCircle.ForeColor = Color.White;
             btnCircle.Image = Properties.Resources.circle;
-            btnCircle.Location = new Point(405, 3);
+            btnCircle.Location = new Point(741, 3);
             btnCircle.Name = "btnCircle";
             btnCircle.Size = new Size(60, 60);
             btnCircle.TabIndex = 2;
@@ -112,7 +116,7 @@
             // 
             btnRectangle.BackColor = Color.LightSkyBlue;
             btnRectangle.Image = Properties.Resources.rectangle;
-            btnRectangle.Location = new Point(603, 3);
+            btnRectangle.Location = new Point(939, 3);
             btnRectangle.Name = "btnRectangle";
             btnRectangle.Size = new Size(60, 60);
             btnRectangle.TabIndex = 1;
@@ -123,7 +127,7 @@
             // 
             btnLine.BackColor = Color.LightSkyBlue;
             btnLine.Image = Properties.Resources.diagonal_line;
-            btnLine.Location = new Point(339, 3);
+            btnLine.Location = new Point(675, 3);
             btnLine.Name = "btnLine";
             btnLine.Size = new Size(60, 60);
             btnLine.TabIndex = 0;
@@ -149,12 +153,12 @@
             // menuStrip1
             // 
             menuStrip1.BackColor = Color.Orchid;
-            menuStrip1.Font = new Font("Forte", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            menuStrip1.Font = new Font("Comic Sans MS", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
             menuStrip1.ImageScalingSize = new Size(20, 20);
-            menuStrip1.Items.AddRange(new ToolStripItem[] { файлToolStripMenuItem, очиститьTobtnSelectColorolStripMenuItem, плагToolStripMenuItem, btnSelectColor });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { файлToolStripMenuItem, очиститьTobtnSelectColorolStripMenuItem, плагToolStripMenuItem, btnSelectColor, encryptionToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(336, 33);
+            menuStrip1.Size = new Size(672, 36);
             menuStrip1.TabIndex = 11;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -162,16 +166,16 @@
             // 
             файлToolStripMenuItem.BackColor = Color.Orchid;
             файлToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { открытьToolStripMenuItem, сохранитьToolStripMenuItem });
-            файлToolStripMenuItem.Font = new Font("Forte", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            файлToolStripMenuItem.Font = new Font("Comic Sans MS", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
             файлToolStripMenuItem.Name = "файлToolStripMenuItem";
-            файлToolStripMenuItem.Size = new Size(71, 29);
+            файлToolStripMenuItem.Size = new Size(75, 32);
             файлToolStripMenuItem.Text = "Файл";
             // 
             // открытьToolStripMenuItem
             // 
             открытьToolStripMenuItem.BackColor = Color.Orchid;
             открытьToolStripMenuItem.Name = "открытьToolStripMenuItem";
-            открытьToolStripMenuItem.Size = new Size(187, 30);
+            открытьToolStripMenuItem.Size = new Size(198, 32);
             открытьToolStripMenuItem.Text = "Открыть";
             открытьToolStripMenuItem.Click += btnLoad_Click;
             // 
@@ -179,30 +183,61 @@
             // 
             сохранитьToolStripMenuItem.BackColor = Color.Orchid;
             сохранитьToolStripMenuItem.Name = "сохранитьToolStripMenuItem";
-            сохранитьToolStripMenuItem.Size = new Size(187, 30);
+            сохранитьToolStripMenuItem.Size = new Size(198, 32);
             сохранитьToolStripMenuItem.Text = "Сохранить";
             сохранитьToolStripMenuItem.Click += btnSave_Click;
             // 
             // очиститьTobtnSelectColorolStripMenuItem
             // 
             очиститьTobtnSelectColorolStripMenuItem.Name = "очиститьTobtnSelectColorolStripMenuItem";
-            очиститьTobtnSelectColorolStripMenuItem.Size = new Size(104, 29);
+            очиститьTobtnSelectColorolStripMenuItem.Size = new Size(117, 32);
             очиститьTobtnSelectColorolStripMenuItem.Text = "Очистить";
             очиститьTobtnSelectColorolStripMenuItem.Click += btnClearCanvas_Click;
             // 
             // плагToolStripMenuItem
             // 
+            плагToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { загрузитьФигуруToolStripMenuItem, зашрузитьФункционалToolStripMenuItem });
             плагToolStripMenuItem.Name = "плагToolStripMenuItem";
-            плагToolStripMenuItem.Size = new Size(86, 29);
+            плагToolStripMenuItem.Size = new Size(100, 32);
             плагToolStripMenuItem.Text = "Плагин";
-            плагToolStripMenuItem.Click += btnInstallPlugin_Click;
+            // 
+            // загрузитьФигуруToolStripMenuItem
+            // 
+            загрузитьФигуруToolStripMenuItem.BackColor = Color.Orchid;
+            загрузитьФигуруToolStripMenuItem.Name = "загрузитьФигуруToolStripMenuItem";
+            загрузитьФигуруToolStripMenuItem.Size = new Size(315, 32);
+            загрузитьФигуруToolStripMenuItem.Text = "Загрузить фигуру";
+            загрузитьФигуруToolStripMenuItem.Click += loadShapeMenuItem_Click;
+            // 
+            // зашрузитьФункционалToolStripMenuItem
+            // 
+            зашрузитьФункционалToolStripMenuItem.BackColor = Color.Orchid;
+            зашрузитьФункционалToolStripMenuItem.Name = "зашрузитьФункционалToolStripMenuItem";
+            зашрузитьФункционалToolStripMenuItem.Size = new Size(315, 32);
+            зашрузитьФункционалToolStripMenuItem.Text = "Загрузить функционал";
+            зашрузитьФункционалToolStripMenuItem.Click += loadFuncMenuItem_Click;
             // 
             // btnSelectColor
             // 
             btnSelectColor.Name = "btnSelectColor";
-            btnSelectColor.Size = new Size(67, 29);
+            btnSelectColor.Size = new Size(71, 32);
             btnSelectColor.Text = "Цвет";
             btnSelectColor.Click += btnSelectColor_Click;
+            // 
+            // encryptionToolStripMenuItem
+            // 
+            encryptionToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { отключитьToolStripMenuItem });
+            encryptionToolStripMenuItem.Name = "encryptionToolStripMenuItem";
+            encryptionToolStripMenuItem.Size = new Size(151, 32);
+            encryptionToolStripMenuItem.Text = "Шифрование";
+            // 
+            // отключитьToolStripMenuItem
+            // 
+            отключитьToolStripMenuItem.BackColor = Color.Orchid;
+            отключитьToolStripMenuItem.Name = "отключитьToolStripMenuItem";
+            отключитьToolStripMenuItem.Size = new Size(207, 32);
+            отключитьToolStripMenuItem.Text = "Отключить";
+            отключитьToolStripMenuItem.Click += отключитьToolStripMenuItem_Click;
             // 
             // MainForm
             // 
@@ -243,5 +278,9 @@
         private ToolStripMenuItem очиститьTobtnSelectColorolStripMenuItem;
         private ToolStripMenuItem плагToolStripMenuItem;
         private ToolStripMenuItem btnSelectColor;
+        private ToolStripMenuItem encryptionToolStripMenuItem;
+        private ToolStripMenuItem отключитьToolStripMenuItem;
+        private ToolStripMenuItem загрузитьФигуруToolStripMenuItem;
+        private ToolStripMenuItem зашрузитьФункционалToolStripMenuItem;
     }
 }

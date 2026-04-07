@@ -9,7 +9,9 @@
         private Color selectedColor = Color.Black; // Currently color
         private bool isResizingMode = false; // Flag to track if the user is currently resizing a shape
         private enum ResizeHandle { None, Left, Right, Top, Bottom, TopLeft, TopRight, BottomLeft, BottomRight } // Types of handles
-        private ResizeHandle activeResizeHandle = ResizeHandle.None; // Stores which handle is currently grabbed
+        private ResizeHandle activeResizeHandle = ResizeHandle.None; // Stores which handle is currently grabbed                                                          
+        private List<IDataProcessorPlugin> dataPlugins = new List<IDataProcessorPlugin>(); // List of all loaded encryption/processing plugins
+        private IDataProcessorPlugin activeProcessor = null; // Currently selected plugin for file processing (null if none)
 
         // Strategy dictionary to link shapes with their drawing behavior
         private Dictionary<Type, IDrawStrategy> shapeStrategies = new Dictionary<Type, IDrawStrategy> // Maps types to strategies
@@ -260,71 +262,6 @@
             }
         }
 
-        private void btnSave_Click(object sender, EventArgs args)
-        {
-            string shapeTypeName; // Variable to store class name
-            int shapeColorArgb; // Variable to store color in integer format
-            using (SaveFileDialog saveDialog = new SaveFileDialog()) // Create save file dialog instance
-            {
-                saveDialog.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"; // Set file extensions
-                saveDialog.Title = "Save project as..."; // Set window title
-                saveDialog.DefaultExt = "txt"; // Set default extension
-                if (saveDialog.ShowDialog() == DialogResult.OK) // If user confirmed saving
-                {
-                    using (StreamWriter fileWriter = new StreamWriter(saveDialog.FileName)) // Open file for writing
-                    {
-                        foreach (Shape currentShape in globalShapeList.GetList()) // Loop through all shapes
-                        {
-                            shapeTypeName = currentShape.GetType().Name; // Get the type name (e.g., "Circle")
-                            shapeColorArgb = currentShape.color.ToArgb(); // Convert Color object to ARGB int
-                            // Data record: Type|X1|Y1|X2|Y2|Color
-                            fileWriter.WriteLine($"{shapeTypeName}|{currentShape.x}|{currentShape.y}|{currentShape.x2}|{currentShape.y2}|{shapeColorArgb}"); // Write line
-                        }
-                    }
-                    MessageBox.Show("File saved successfully!", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information); // Show success message
-                }
-            }
-        }
-
-        private void btnLoad_Click(object sender, EventArgs args)
-        {
-            string shapeTypeFromFile; // Variable for type name from file
-            string[] lineParts; // Array to hold split segments of the line
-            using (OpenFileDialog openDialog = new OpenFileDialog()) // Create open file dialog instance
-            {
-                openDialog.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"; // Set file extensions
-                openDialog.Title = "Open saved project"; // Set window title
-                if (openDialog.ShowDialog() == DialogResult.OK) // If user confirmed loading
-                {
-                    globalShapeList.GetList().Clear(); // Wipe current canvas content
-                    selectedShape = null; // Reset selection
-                    foreach (string currentLine in File.ReadLines(openDialog.FileName)) // Iterate through each file line
-                    {
-                        lineParts = currentLine.Split('|'); // Split line by pipe separator
-                        if (lineParts.Length < 6)
-                            continue; // Skip malformed lines
-                        shapeTypeFromFile = lineParts[0]; // Extract shape type string
-                        if (factoryRegistry.ContainsKey(shapeTypeFromFile)) // Check if type is in registry
-                        {
-                            Shape restoredShape = factoryRegistry[shapeTypeFromFile].Create(); // Use factory to create instance
-                            restoredShape.x = int.Parse(lineParts[1]); // Parse and set start X
-                            restoredShape.y = int.Parse(lineParts[2]); // Parse and set start Y
-                            restoredShape.x2 = int.Parse(lineParts[3]); // Parse and set end X
-                            restoredShape.y2 = int.Parse(lineParts[4]); // Parse and set end Y
-                            restoredShape.color = Color.FromArgb(int.Parse(lineParts[5])); // Parse and set color
-                            // Re-assign drawing strategy and add to global list
-                            if (shapeStrategies.ContainsKey(restoredShape.GetType())) // Check for corresponding strategy
-                                restoredShape.DrawStrategy = shapeStrategies[restoredShape.GetType()]; // Set the strategy
-
-                            globalShapeList.Add(restoredShape); // Add restored shape to the collection
-                        }
-                    }
-                    canvas.Invalidate(); // Refresh canvas to show loaded data
-                    MessageBox.Show("Loading complete!", "Load", MessageBoxButtons.OK, MessageBoxIcon.Information); // Show success message
-                }
-            }
-        }
-
         private void AddPluginButton(IPlugin plugin)
         {
             string iconName;
@@ -333,7 +270,7 @@
             newBtn.BackColor = Color.LightSkyBlue;
             newBtn.FlatStyle = FlatStyle.Flat;
             newBtn.FlatAppearance.BorderColor = Color.White;
-            newBtn.BackgroundImageLayout = ImageLayout.Zoom; 
+            newBtn.BackgroundImageLayout = ImageLayout.Zoom;
             newBtn.Tag = plugin.GetFactory();
             newBtn.Text = "";
             iconName = plugin.Name.ToLower();
@@ -348,91 +285,234 @@
             newBtn.Click += OnShapeButtonClick;
             flowPanel.Controls.Add(newBtn);
         }
-        private void btnInstallPlugin_Click(object sender, EventArgs e)
+
+        private void btnSave_Click(object sender, EventArgs args)
         {
-            string dllPath, sigPath, dateStr, savedHash, currentHash, folder;
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Plugins (*.dll)|*.dll";
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            string shapeTypeName;
+            int shapeColorArgb;
+            using (SaveFileDialog saveDialog = new SaveFileDialog())
             {
-                dllPath = openFileDialog.FileName;
-                // Create the .sig file in the same folder
-                sigPath = dllPath + ".sig";
-                try
+                saveDialog.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
+                saveDialog.Title = "Сохранить проект как...";
+                saveDialog.DefaultExt = "txt";
+                if (saveDialog.ShowDialog() == DialogResult.OK)
                 {
-                    // Calculate hash using our validator class
-                    currentHash = PluginValidator.GetFileHash(dllPath);
-                    if (!File.Exists(sigPath))
+                    // 1. Collect all shapes data into a string builder first
+                    System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                    foreach (Shape currentShape in globalShapeList.GetList())
                     {
-                        // Create content: Hash on line 1, Date on line 2
-                        string[] newSig = { currentHash, DateTime.Now.ToString("yyyy-MM-dd") };
-                        File.WriteAllLines(sigPath, newSig);
-                        folder = Path.GetDirectoryName(sigPath);
-                        MessageBox.Show($"Signature created in folder:\n{folder}\n\nPlease select the DLL again to verify.", "Signing Success");
-                        return;
+                        shapeTypeName = currentShape.GetType().Name;
+                        shapeColorArgb = currentShape.color.ToArgb();
+                        sb.AppendLine($"{shapeTypeName}|{currentShape.x}|{currentShape.y}|{currentShape.x2}|{currentShape.y2}|{shapeColorArgb}");
                     }
+                    // 2. Convert string to byte array
+                    byte[] data = System.Text.Encoding.UTF8.GetBytes(sb.ToString());
+                    // 3. If an encryption plugin is selected, process the data
+                    if (activeProcessor != null)
+                    {
+                        data = activeProcessor.ProcessBeforeSave(data);
+                    }
+                    File.WriteAllBytes(saveDialog.FileName, data);
+                    MessageBox.Show("Файл успешно сохранен!", "Сохранение", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+        }
+        private void btnLoad_Click(object sender, EventArgs args)
+        {
+            using (OpenFileDialog openDialog = new OpenFileDialog())
+            {
+                string content, shapeTypeFromFile;
+                openDialog.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
+                openDialog.Title = "Открыть файл";
+                if (openDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        // 1. Read all bytes from file
+                        byte[] data = File.ReadAllBytes(openDialog.FileName);
+                        // 2. If an encryption plugin is selected, decrypt the data
+                        if (activeProcessor != null)
+                        {
+                            data = activeProcessor.ProcessAfterLoad(data);
+                        }
+                        // 3. Convert bytes back to string and split into lines
+                        content = System.Text.Encoding.UTF8.GetString(data);
+                        string[] lines = content.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                        globalShapeList.GetList().Clear();
+                        selectedShape = null;
+                        foreach (string currentLine in lines)
+                        {
+                            string[] lineParts = currentLine.Split('|');
+                            if (lineParts.Length < 6)
+                                continue;
+                            shapeTypeFromFile = lineParts[0];
+                            if (factoryRegistry.ContainsKey(shapeTypeFromFile))
+                            {
+                                Shape restoredShape = factoryRegistry[shapeTypeFromFile].Create();
+                                restoredShape.x = int.Parse(lineParts[1]);
+                                restoredShape.y = int.Parse(lineParts[2]);
+                                restoredShape.x2 = int.Parse(lineParts[3]);
+                                restoredShape.y2 = int.Parse(lineParts[4]);
+                                restoredShape.color = Color.FromArgb(int.Parse(lineParts[5]));
+                                if (shapeStrategies.ContainsKey(restoredShape.GetType()))
+                                    restoredShape.DrawStrategy = shapeStrategies[restoredShape.GetType()];
+
+                                globalShapeList.Add(restoredShape);
+                            }
+                        }
+                        canvas.Invalidate();
+                        MessageBox.Show("Загрузка успешно завершена!", "Загрузка", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Ошибка загрузки файла. \n" + ex.Message);
+                    }
+                }
+            }
+        }
+
+        private bool IsPluginSecure(string dllPath)
+        {
+            bool isCorrect = true;
+            string currentHash, savedHash, dateStr;
+            string sigPath = dllPath + ".sig";
+            try
+            {
+                currentHash = PluginValidator.GetFileHash(dllPath);
+                // Check if signature file exists; if not, create it and mark as incorrect
+                if (isCorrect && !File.Exists(sigPath))
+                {
+                    string[] newSig = { currentHash, DateTime.Now.ToString("yyyy-MM-dd") };
+                    File.WriteAllLines(sigPath, newSig);
+                    MessageBox.Show("Подпись создана. Выберите плагин заново.", "Signature Creation");
+                    isCorrect = false;
+                }
+                // Validate the structure of the signature file
+                if (isCorrect)
+                {
                     string[] sigLines = File.ReadAllLines(sigPath);
                     if (sigLines.Length < 2)
                     {
-                        MessageBox.Show("Error: Signature file is invalid.");
-                        return;
+                        MessageBox.Show("Ошибка: Неверный формат файла подписи.");
+                        isCorrect = false;
                     }
-                    savedHash = sigLines[0].Trim();
-                    dateStr = sigLines[1].Trim();
-                    if (currentHash != savedHash)
+                    else
                     {
-                        MessageBox.Show("Plugin integrity violation! Hashes do not match.", "Security Alert");
-                        return;
-                    }
-                    if (DateTime.TryParse(dateStr, out DateTime activationDate))
-                    {
-                        if (DateTime.Now < activationDate)
+                        savedHash = sigLines[0].Trim();
+                        dateStr = sigLines[1].Trim();
+                        // Compare the current file hash with the saved hash
+                        if (currentHash != savedHash)
                         {
-                            MessageBox.Show($"Error: Plugin is not active yet!\nActivation date: {activationDate.ToShortDateString()}", "Security Alert");
-                            return;
+                            MessageBox.Show("Ошибка: несовпадение хэшей!", "Проверка подписи");
+                            isCorrect = false;
                         }
-                    }
-                    LoadPlugin(dllPath);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Security check failed: " + ex.Message);
-                }
-            }
-        }
-
-        private void LoadPlugin(string dllPath) // Method to handle DLL loading
-        {
-            bool pluginFound;
-            try
-            {
-                System.Reflection.Assembly assembly = System.Reflection.Assembly.LoadFrom(dllPath);
-                pluginFound = false;
-                foreach (Type type in assembly.GetTypes())
-                {
-                    // Check if type implements IPlugin
-                    if (typeof(IPlugin).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
-                    {
-                        IPlugin plugin = (IPlugin)Activator.CreateInstance(type);
-                        Shape sampleShape = plugin.GetFactory().Create();
-                        Type shapeType = sampleShape.GetType();
-                        // Register plugin in dictionaries
-                        if (!factoryRegistry.ContainsKey(shapeType.Name))
+                        // Verify the activation date of the signature
+                        if (isCorrect && DateTime.TryParse(dateStr, out DateTime activationDate))
                         {
-                            factoryRegistry.Add(shapeType.Name, plugin.GetFactory());
-                            shapeStrategies.Add(shapeType, plugin.GetStrategy());
-                            AddPluginButton(plugin); // Add button to UI
-                            pluginFound = true;
+                            if (DateTime.Now < activationDate)
+                            {
+                                MessageBox.Show($"Ошибка: подпись неактивна {activationDate.ToShortDateString()}", "Проверка подписи");
+                                isCorrect = false;
+                            }
                         }
                     }
                 }
-                if (pluginFound) MessageBox.Show("Plugin loaded successfully!");
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Loading error: " + ex.Message);
+                MessageBox.Show("Ошибка проверки: " + ex.Message);
+                isCorrect = false;
+            }
+
+            return isCorrect;
+        }
+        private void отключитьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            activeProcessor = null;
+            MessageBox.Show("Шифрование отключено. Файлы будут сохраняться в обычном виде.");
+        }
+
+        private void loadShapeMenuItem_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "DLL files (*.dll)|*.dll";
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    if (!IsPluginSecure(openFileDialog.FileName))
+                        return;
+                    try
+                    {
+                        var assembly = System.Reflection.Assembly.LoadFrom(openFileDialog.FileName);
+                        foreach (Type type in assembly.GetTypes())
+                        {
+                            if (typeof(IPlugin).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
+                            {
+                                IPlugin plugin = (IPlugin)Activator.CreateInstance(type);
+                                Shape sampleShape = plugin.GetFactory().Create();
+                                Type shapeType = sampleShape.GetType();
+                                if (!factoryRegistry.ContainsKey(shapeType.Name))
+                                {
+                                    factoryRegistry.Add(shapeType.Name, plugin.GetFactory());
+                                    if (!shapeStrategies.ContainsKey(shapeType))
+                                    {
+                                        shapeStrategies.Add(shapeType, plugin.GetStrategy());
+                                    }
+                                    AddPluginButton(plugin);
+                                    MessageBox.Show($"Фигура {shapeType.Name} успешно добавлена!");
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex) { MessageBox.Show("Ошибка загрузки фигуры: " + ex.Message); }
+                }
             }
         }
 
+        private void loadFuncMenuItem_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "DLL files (*.dll)|*.dll";
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    if (!IsPluginSecure(openFileDialog.FileName))
+                        return;
+                    try
+                    {
+                        var assembly = System.Reflection.Assembly.LoadFrom(openFileDialog.FileName);
+                        foreach (Type type in assembly.GetTypes())
+                        {
+                            if (typeof(IDataProcessorPlugin).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
+                            {
+                                IDataProcessorPlugin dataPlugin = (IDataProcessorPlugin)Activator.CreateInstance(type);
+                                if (!dataPlugins.Any(p => p.Name == dataPlugin.Name))
+                                {
+                                    dataPlugins.Add(dataPlugin);
+                                    ToolStripMenuItem pluginRootItem = new ToolStripMenuItem(dataPlugin.Name);
+                                    pluginRootItem.Font = new Font("Comic Sans MS", 12f);
+                                    pluginRootItem.BackColor = Color.Orchid;
+
+                                    ToolStripMenuItem selectItem = new ToolStripMenuItem("Activate");
+                                    selectItem.Font = new Font("Comic Sans MS", 12f);
+                                    selectItem.Click += (s, ev) => { activeProcessor = dataPlugin; MessageBox.Show(dataPlugin.Name + " activated!"); };
+
+                                    ToolStripMenuItem settingsItem = new ToolStripMenuItem("Settings");
+                                    settingsItem.Font = new Font("Comic Sans MS", 12f);
+                                    settingsItem.Click += (s, ev) => { dataPlugin.ShowSettings(); };
+
+                                    pluginRootItem.DropDownItems.Add(selectItem);
+                                    pluginRootItem.DropDownItems.Add(settingsItem);
+                                    encryptionToolStripMenuItem.DropDownItems.Add(pluginRootItem);
+                                    MessageBox.Show($"Плагин шифрования {dataPlugin.Name} загружен!");
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex) { MessageBox.Show("Ошибка загрузки шифрования: " + ex.Message); }
+                }
+            }
+        }
     }
+
 }
