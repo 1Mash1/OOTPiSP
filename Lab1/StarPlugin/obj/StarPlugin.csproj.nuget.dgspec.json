@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\4 — копия\\StarPlugin\\StarPlugin.csproj": {}
+    "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\5\\StarPlugin\\StarPlugin.csproj": {}
   },
   "projects": {
-    "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\4 — копия\\2\\2.csproj": {
+    "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\5\\2\\2.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\4 — копия\\2\\2.csproj",
+        "projectUniqueName": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\5\\2\\2.csproj",
         "projectName": "2",
-        "projectPath": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\4 — копия\\2\\2.csproj",
+        "projectPath": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\5\\2\\2.csproj",
         "packagesPath": "C:\\Users\\Ma__sh__ka\\.nuget\\packages\\",
-        "outputPath": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\4 — копия\\2\\obj\\",
+        "outputPath": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\5\\2\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -72,14 +72,14 @@
         }
       }
     },
-    "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\4 — копия\\StarPlugin\\StarPlugin.csproj": {
+    "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\5\\StarPlugin\\StarPlugin.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\4 — копия\\StarPlugin\\StarPlugin.csproj",
+        "projectUniqueName": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\5\\StarPlugin\\StarPlugin.csproj",
         "projectName": "StarPlugin",
-        "projectPath": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\4 — копия\\StarPlugin\\StarPlugin.csproj",
+        "projectPath": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\5\\StarPlugin\\StarPlugin.csproj",
         "packagesPath": "C:\\Users\\Ma__sh__ka\\.nuget\\packages\\",
-        "outputPath": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\4 — копия\\StarPlugin\\obj\\",
+        "outputPath": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\5\\StarPlugin\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -100,8 +100,8 @@
           "net8.0-windows7.0": {
             "targetAlias": "net8.0-windows",
             "projectReferences": {
-              "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\4 — копия\\2\\2.csproj": {
-                "projectPath": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\4 — копия\\2\\2.csproj"
+              "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\5\\2\\2.csproj": {
+                "projectPath": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\5\\2\\2.csproj"
               }
             }
           }
