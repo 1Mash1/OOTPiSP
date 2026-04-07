@@ -15,48 +15,48 @@
         private Dictionary<Type, IDrawStrategy> shapeStrategies = new Dictionary<Type, IDrawStrategy> // Maps types to strategies
         {
             { typeof(Line), new LineDrawStrategy() },
-            { typeof(Circle), new CircleDrawStrategy() }, 
-            { typeof(MyRectangle), new MyRectangleDrawStrategy() }, 
+            { typeof(Circle), new CircleDrawStrategy() },
+            { typeof(MyRectangle), new MyRectangleDrawStrategy() },
             { typeof(Square), new SquareDrawStrategy() },
-            { typeof(Elipse), new ElipseDrawStrategy() }, 
-            { typeof(Triangle), new TriangleDrawStrategy() } 
+            { typeof(Elipse), new ElipseDrawStrategy() },
+            { typeof(Triangle), new TriangleDrawStrategy() }
         };
 
         // Factory dictionary for loading objects by type name
         private Dictionary<string, ShapeFactory> factoryRegistry = new Dictionary<string, ShapeFactory> // Maps strings to factories
         {
-            { "Line", new LineFactory() }, 
-            { "Circle", new CircleFactory() }, 
-            { "MyRectangle", new RectFactory() }, 
-            { "Square", new SquareFactory() }, 
-            { "Elipse", new ElipseFactory() }, 
-            { "Triangle", new TriangleFactory() } 
+            { "Line", new LineFactory() },
+            { "Circle", new CircleFactory() },
+            { "MyRectangle", new RectFactory() },
+            { "Square", new SquareFactory() },
+            { "Elipse", new ElipseFactory() },
+            { "Triangle", new TriangleFactory() }
         };
 
-        public MainForm() 
+        public MainForm()
         {
-            InitializeComponent(); 
-            btnLine.Tag = new LineFactory(); 
-            btnRectangle.Tag = new RectFactory(); 
-            btnCircle.Tag = new CircleFactory(); 
+            InitializeComponent();
+            btnLine.Tag = new LineFactory();
+            btnRectangle.Tag = new RectFactory();
+            btnCircle.Tag = new CircleFactory();
             btnSquare.Tag = new SquareFactory();
-            btnElipse.Tag = new ElipseFactory(); 
-            btnTriangle.Tag = new TriangleFactory(); 
+            btnElipse.Tag = new ElipseFactory();
+            btnTriangle.Tag = new TriangleFactory();
         }
 
-        private void OnShapeButtonClick(object sender, EventArgs args) 
+        private void OnShapeButtonClick(object sender, EventArgs args)
         {
             Button clickedButton;
-            if (sender is Button) 
+            if (sender is Button)
             {
-                clickedButton = (Button)sender; 
-                activeShapeFactory = (ShapeFactory)clickedButton.Tag; 
-                if (selectedShape != null) 
-                    selectedShape.IsSelected = false; 
-                selectedShape = null; 
+                clickedButton = (Button)sender;
+                activeShapeFactory = (ShapeFactory)clickedButton.Tag;
+                if (selectedShape != null)
+                    selectedShape.IsSelected = false;
+                selectedShape = null;
             }
         }
-        private void canvas_MouseDown(object sender, MouseEventArgs mouseArgs) 
+        private void canvas_MouseDown(object sender, MouseEventArgs mouseArgs)
         {
             Shape foundShape; // Variable to store a shape found at the click point
             List<Shape> currentShapes; // Local reference to the list of shapes
@@ -92,7 +92,7 @@
             else // If clicked on empty space
             {
                 if (selectedShape != null) // If a shape was selected
-                    selectedShape.IsSelected = false; 
+                    selectedShape.IsSelected = false;
                 selectedShape = null; // Clear selection reference
                 if (activeShapeFactory != null) // If a drawing tool is active
                 {
@@ -105,10 +105,10 @@
                     previewShape.color = selectedColor; // Set the current drawing color
                 }
             }
-            canvas.Invalidate(); 
+            canvas.Invalidate();
         }
 
-        private void canvas_MouseMove(object sender, MouseEventArgs mouseArgs) 
+        private void canvas_MouseMove(object sender, MouseEventArgs mouseArgs)
         {
             if (isResizingMode && selectedShape != null) // Check if resizing is in progress
             {
@@ -117,32 +117,32 @@
                 {
                     case ResizeHandle.Left: // Resizing from the left side
                         selectedShape.x = mouseArgs.X; // Update start X
-                        break; 
+                        break;
                     case ResizeHandle.Right: // Resizing from the right side
                         selectedShape.x2 = mouseArgs.X; // Update end X
-                        break; 
+                        break;
                     case ResizeHandle.Top: // Resizing from the top
                         selectedShape.y = mouseArgs.Y; // Update start Y
-                        break; 
+                        break;
                     case ResizeHandle.Bottom: // Resizing from the bottom
                         selectedShape.y2 = mouseArgs.Y; // Update end Y
-                        break; 
+                        break;
                     case ResizeHandle.TopLeft: // Resizing from the top-left corner
                         selectedShape.x = mouseArgs.X; // Update start X
                         selectedShape.y = mouseArgs.Y; // Update start Y
-                        break; 
+                        break;
                     case ResizeHandle.TopRight: // Resizing from the top-right corner
                         selectedShape.x2 = mouseArgs.X; // Update end X
                         selectedShape.y = mouseArgs.Y; // Update start Y
-                        break; 
+                        break;
                     case ResizeHandle.BottomLeft: // Resizing from the bottom-left corner
                         selectedShape.x = mouseArgs.X; // Update start X
                         selectedShape.y2 = mouseArgs.Y; // Update end Y
-                        break; 
+                        break;
                     case ResizeHandle.BottomRight: // Resizing from the bottom-right corner
                         selectedShape.x2 = mouseArgs.X; // Update end X
                         selectedShape.y2 = mouseArgs.Y; // Update end Y
-                        break; 
+                        break;
                 }
                 canvas.Invalidate(); // Refresh canvas
             }
@@ -154,7 +154,7 @@
             }
         }
 
-        private void canvas_MouseUp(object sender, MouseEventArgs mouseArgs) 
+        private void canvas_MouseUp(object sender, MouseEventArgs mouseArgs)
         {
             isResizingMode = false; // Disable resizing flag
             activeResizeHandle = ResizeHandle.None; // Reset the active handle
@@ -165,14 +165,14 @@
                 canvas.Invalidate(); // Final refresh of the canvas
             }
         }
-        private void canvas_Paint(object sender, PaintEventArgs paintArgs) 
+        private void canvas_Paint(object sender, PaintEventArgs paintArgs)
         {
             Rectangle visualBounds; // Variable for shape boundary calculation
             int[] xPoints, yPoints; // Arrays for storing handle coordinates
-            paintArgs.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias; 
+            paintArgs.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             foreach (Shape shape in globalShapeList.GetList())
             {
-                shape.DrawStrategy.Draw(paintArgs.Graphics, shape); 
+                shape.DrawStrategy.Draw(paintArgs.Graphics, shape);
                 if (shape.IsSelected) // If the shape is currently selected
                 {
                     visualBounds = shape.DrawStrategy.GetBounds(shape); // Calculate current bounds
@@ -191,7 +191,7 @@
                         visualBounds.Top + visualBounds.Height / 2, visualBounds.Top + visualBounds.Height / 2,
                         visualBounds.Top, visualBounds.Bottom
                     };
-                    for (int i = 0; i < 8; i++) 
+                    for (int i = 0; i < 8; i++)
                     {
                         paintArgs.Graphics.FillRectangle(Brushes.White, xPoints[i] - 3, yPoints[i] - 3, 6, 6); // Draw handle background
                         paintArgs.Graphics.DrawRectangle(Pens.Black, xPoints[i] - 3, yPoints[i] - 3, 6, 6); // Draw handle border
@@ -204,7 +204,7 @@
             }
         }
 
-        private ResizeHandle GetHitHandle(Shape shape, Point mouseLocation) 
+        private ResizeHandle GetHitHandle(Shape shape, Point mouseLocation)
         {
             Rectangle bounds; // Bounds of the shape
             int handleHalfSize; // Half of handle size for hit area calculation
@@ -234,7 +234,7 @@
             return ResizeHandle.None; // Return None if no handle hit
         }
 
-        private void btnClearCanvas_Click(object sender, EventArgs args) 
+        private void btnClearCanvas_Click(object sender, EventArgs args)
         {
             if (selectedShape != null) // If a shape is selected
             {
@@ -246,7 +246,7 @@
             canvas.Invalidate(); // Refresh canvas
         }
 
-        private void btnSelectColor_Click(object sender, EventArgs args) 
+        private void btnSelectColor_Click(object sender, EventArgs args)
         {
             if (colorDialog.ShowDialog() == DialogResult.OK) // If user clicked OK in the dialog
             {
@@ -260,7 +260,7 @@
             }
         }
 
-        private void btnSave_Click(object sender, EventArgs args) 
+        private void btnSave_Click(object sender, EventArgs args)
         {
             string shapeTypeName; // Variable to store class name
             int shapeColorArgb; // Variable to store color in integer format
@@ -286,7 +286,7 @@
             }
         }
 
-        private void btnLoad_Click(object sender, EventArgs args) 
+        private void btnLoad_Click(object sender, EventArgs args)
         {
             string shapeTypeFromFile; // Variable for type name from file
             string[] lineParts; // Array to hold split segments of the line
@@ -324,5 +324,115 @@
                 }
             }
         }
+
+        private void AddPluginButton(IPlugin plugin)
+        {
+            string iconName;
+            Button newBtn = new Button();
+            newBtn.Size = new Size(45, 45); // Size for button
+            newBtn.BackColor = Color.LightSkyBlue;
+            newBtn.FlatStyle = FlatStyle.Flat;
+            newBtn.FlatAppearance.BorderColor = Color.White;
+            newBtn.BackgroundImageLayout = ImageLayout.Zoom; 
+            newBtn.Tag = plugin.GetFactory();
+            newBtn.Text = "";
+            iconName = plugin.Name.ToLower();
+            object iconObj = Properties.Resources.ResourceManager.GetObject(iconName);
+            if (iconObj is Image)
+                newBtn.BackgroundImage = (Image)iconObj;
+            else
+            {
+                newBtn.Text = plugin.Name;
+                newBtn.Font = new Font("Arial", 7);
+            }
+            newBtn.Click += OnShapeButtonClick;
+            flowPanel.Controls.Add(newBtn);
+        }
+        private void btnInstallPlugin_Click(object sender, EventArgs e)
+        {
+            string dllPath, sigPath, dateStr, savedHash, currentHash, folder;
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Plugins (*.dll)|*.dll";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                dllPath = openFileDialog.FileName;
+                // Create the .sig file in the same folder
+                sigPath = dllPath + ".sig";
+                try
+                {
+                    // Calculate hash using our validator class
+                    currentHash = PluginValidator.GetFileHash(dllPath);
+                    if (!File.Exists(sigPath))
+                    {
+                        // Create content: Hash on line 1, Date on line 2
+                        string[] newSig = { currentHash, DateTime.Now.ToString("yyyy-MM-dd") };
+                        File.WriteAllLines(sigPath, newSig);
+                        folder = Path.GetDirectoryName(sigPath);
+                        MessageBox.Show($"Signature created in folder:\n{folder}\n\nPlease select the DLL again to verify.", "Signing Success");
+                        return;
+                    }
+                    string[] sigLines = File.ReadAllLines(sigPath);
+                    if (sigLines.Length < 2)
+                    {
+                        MessageBox.Show("Error: Signature file is invalid.");
+                        return;
+                    }
+                    savedHash = sigLines[0].Trim();
+                    dateStr = sigLines[1].Trim();
+                    if (currentHash != savedHash)
+                    {
+                        MessageBox.Show("Plugin integrity violation! Hashes do not match.", "Security Alert");
+                        return;
+                    }
+                    if (DateTime.TryParse(dateStr, out DateTime activationDate))
+                    {
+                        if (DateTime.Now < activationDate)
+                        {
+                            MessageBox.Show($"Error: Plugin is not active yet!\nActivation date: {activationDate.ToShortDateString()}", "Security Alert");
+                            return;
+                        }
+                    }
+                    LoadPlugin(dllPath);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Security check failed: " + ex.Message);
+                }
+            }
+        }
+
+        private void LoadPlugin(string dllPath) // Method to handle DLL loading
+        {
+            bool pluginFound;
+            try
+            {
+                System.Reflection.Assembly assembly = System.Reflection.Assembly.LoadFrom(dllPath);
+                pluginFound = false;
+                foreach (Type type in assembly.GetTypes())
+                {
+                    // Check if type implements IPlugin
+                    if (typeof(IPlugin).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
+                    {
+                        IPlugin plugin = (IPlugin)Activator.CreateInstance(type);
+                        Shape sampleShape = plugin.GetFactory().Create();
+                        Type shapeType = sampleShape.GetType();
+                        // Register plugin in dictionaries
+                        if (!factoryRegistry.ContainsKey(shapeType.Name))
+                        {
+                            factoryRegistry.Add(shapeType.Name, plugin.GetFactory());
+                            shapeStrategies.Add(shapeType, plugin.GetStrategy());
+                            AddPluginButton(plugin); // Add button to UI
+                            pluginFound = true;
+                        }
+                    }
+                }
+                if (pluginFound) MessageBox.Show("Plugin loaded successfully!");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Loading error: " + ex.Message);
+            }
+        }
+
     }
 }

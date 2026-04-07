@@ -29,11 +29,6 @@
         private void InitializeComponent()
         {
             canvas = new PictureBox();
-            panel1 = new Panel();
-            btnLoad = new Button();
-            btnSave = new Button();
-            btnSelectColor = new Button();
-            btnClearCanvas = new Button();
             btnTriangle = new Button();
             btnElipse = new Button();
             btnSquare = new Button();
@@ -41,8 +36,17 @@
             btnRectangle = new Button();
             btnLine = new Button();
             colorDialog = new ColorDialog();
+            flowPanel = new FlowLayoutPanel();
+            menuStrip1 = new MenuStrip();
+            файлToolStripMenuItem = new ToolStripMenuItem();
+            открытьToolStripMenuItem = new ToolStripMenuItem();
+            сохранитьToolStripMenuItem = new ToolStripMenuItem();
+            очиститьTobtnSelectColorolStripMenuItem = new ToolStripMenuItem();
+            плагToolStripMenuItem = new ToolStripMenuItem();
+            btnSelectColor = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)canvas).BeginInit();
-            panel1.SuspendLayout();
+            flowPanel.SuspendLayout();
+            menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // canvas
@@ -59,82 +63,11 @@
             canvas.MouseMove += canvas_MouseMove;
             canvas.MouseUp += canvas_MouseUp;
             // 
-            // panel1
-            // 
-            panel1.BackColor = Color.Pink;
-            panel1.Controls.Add(btnLoad);
-            panel1.Controls.Add(btnSave);
-            panel1.Controls.Add(btnSelectColor);
-            panel1.Controls.Add(btnClearCanvas);
-            panel1.Controls.Add(btnTriangle);
-            panel1.Controls.Add(btnElipse);
-            panel1.Controls.Add(btnSquare);
-            panel1.Controls.Add(btnCircle);
-            panel1.Controls.Add(btnRectangle);
-            panel1.Controls.Add(btnLine);
-            panel1.Dock = DockStyle.Top;
-            panel1.Location = new Point(0, 0);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(1082, 125);
-            panel1.TabIndex = 1;
-            // 
-            // btnLoad
-            // 
-            btnLoad.BackColor = Color.Orchid;
-            btnLoad.FlatStyle = FlatStyle.Flat;
-            btnLoad.Font = new Font("Forte", 16F);
-            btnLoad.Location = new Point(784, 67);
-            btnLoad.Name = "btnLoad";
-            btnLoad.Size = new Size(100, 45);
-            btnLoad.TabIndex = 9;
-            btnLoad.Text = "Load";
-            btnLoad.UseVisualStyleBackColor = false;
-            btnLoad.Click += btnLoad_Click;
-            // 
-            // btnSave
-            // 
-            btnSave.BackColor = Color.Orchid;
-            btnSave.FlatStyle = FlatStyle.Flat;
-            btnSave.Font = new Font("Forte", 16F);
-            btnSave.Location = new Point(784, 12);
-            btnSave.Name = "btnSave";
-            btnSave.Size = new Size(100, 45);
-            btnSave.TabIndex = 8;
-            btnSave.Text = "Save";
-            btnSave.UseVisualStyleBackColor = false;
-            btnSave.Click += btnSave_Click;
-            // 
-            // btnSelectColor
-            // 
-            btnSelectColor.BackColor = Color.Orchid;
-            btnSelectColor.FlatStyle = FlatStyle.Flat;
-            btnSelectColor.Font = new Font("Forte", 16F);
-            btnSelectColor.Location = new Point(941, 6);
-            btnSelectColor.Name = "btnSelectColor";
-            btnSelectColor.Size = new Size(100, 45);
-            btnSelectColor.TabIndex = 7;
-            btnSelectColor.Text = "Color";
-            btnSelectColor.UseVisualStyleBackColor = false;
-            btnSelectColor.Click += btnSelectColor_Click;
-            // 
-            // btnClearCanvas
-            // 
-            btnClearCanvas.BackColor = Color.Orchid;
-            btnClearCanvas.FlatStyle = FlatStyle.Flat;
-            btnClearCanvas.Font = new Font("Forte", 16F);
-            btnClearCanvas.Location = new Point(941, 67);
-            btnClearCanvas.Name = "btnClearCanvas";
-            btnClearCanvas.Size = new Size(100, 45);
-            btnClearCanvas.TabIndex = 6;
-            btnClearCanvas.Text = "Clear";
-            btnClearCanvas.UseVisualStyleBackColor = false;
-            btnClearCanvas.Click += btnClearCanvas_Click;
-            // 
             // btnTriangle
             // 
             btnTriangle.BackColor = Color.LightSkyBlue;
             btnTriangle.Image = Properties.Resources.triangle;
-            btnTriangle.Location = new Point(440, 27);
+            btnTriangle.Location = new Point(537, 3);
             btnTriangle.Name = "btnTriangle";
             btnTriangle.Size = new Size(60, 60);
             btnTriangle.TabIndex = 5;
@@ -145,7 +78,7 @@
             // 
             btnElipse.BackColor = Color.LightSkyBlue;
             btnElipse.Image = Properties.Resources.elipse;
-            btnElipse.Location = new Point(541, 27);
+            btnElipse.Location = new Point(669, 3);
             btnElipse.Name = "btnElipse";
             btnElipse.Size = new Size(60, 60);
             btnElipse.TabIndex = 4;
@@ -156,7 +89,7 @@
             // 
             btnSquare.BackColor = Color.LightSkyBlue;
             btnSquare.Image = Properties.Resources.square;
-            btnSquare.Location = new Point(335, 27);
+            btnSquare.Location = new Point(471, 3);
             btnSquare.Name = "btnSquare";
             btnSquare.Size = new Size(60, 60);
             btnSquare.TabIndex = 3;
@@ -168,7 +101,7 @@
             btnCircle.BackColor = Color.LightSkyBlue;
             btnCircle.ForeColor = Color.White;
             btnCircle.Image = Properties.Resources.circle;
-            btnCircle.Location = new Point(233, 27);
+            btnCircle.Location = new Point(405, 3);
             btnCircle.Name = "btnCircle";
             btnCircle.Size = new Size(60, 60);
             btnCircle.TabIndex = 2;
@@ -179,7 +112,7 @@
             // 
             btnRectangle.BackColor = Color.LightSkyBlue;
             btnRectangle.Image = Properties.Resources.rectangle;
-            btnRectangle.Location = new Point(131, 27);
+            btnRectangle.Location = new Point(603, 3);
             btnRectangle.Name = "btnRectangle";
             btnRectangle.Size = new Size(60, 60);
             btnRectangle.TabIndex = 1;
@@ -190,12 +123,86 @@
             // 
             btnLine.BackColor = Color.LightSkyBlue;
             btnLine.Image = Properties.Resources.diagonal_line;
-            btnLine.Location = new Point(41, 27);
+            btnLine.Location = new Point(339, 3);
             btnLine.Name = "btnLine";
             btnLine.Size = new Size(60, 60);
             btnLine.TabIndex = 0;
             btnLine.UseVisualStyleBackColor = false;
             btnLine.Click += OnShapeButtonClick;
+            // 
+            // flowPanel
+            // 
+            flowPanel.BackColor = Color.Pink;
+            flowPanel.Controls.Add(menuStrip1);
+            flowPanel.Controls.Add(btnLine);
+            flowPanel.Controls.Add(btnCircle);
+            flowPanel.Controls.Add(btnSquare);
+            flowPanel.Controls.Add(btnTriangle);
+            flowPanel.Controls.Add(btnRectangle);
+            flowPanel.Controls.Add(btnElipse);
+            flowPanel.Dock = DockStyle.Top;
+            flowPanel.Location = new Point(0, 0);
+            flowPanel.Name = "flowPanel";
+            flowPanel.Size = new Size(1082, 125);
+            flowPanel.TabIndex = 2;
+            // 
+            // menuStrip1
+            // 
+            menuStrip1.BackColor = Color.Orchid;
+            menuStrip1.Font = new Font("Forte", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            menuStrip1.ImageScalingSize = new Size(20, 20);
+            menuStrip1.Items.AddRange(new ToolStripItem[] { файлToolStripMenuItem, очиститьTobtnSelectColorolStripMenuItem, плагToolStripMenuItem, btnSelectColor });
+            menuStrip1.Location = new Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Size = new Size(336, 33);
+            menuStrip1.TabIndex = 11;
+            menuStrip1.Text = "menuStrip1";
+            // 
+            // файлToolStripMenuItem
+            // 
+            файлToolStripMenuItem.BackColor = Color.Orchid;
+            файлToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { открытьToolStripMenuItem, сохранитьToolStripMenuItem });
+            файлToolStripMenuItem.Font = new Font("Forte", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            файлToolStripMenuItem.Name = "файлToolStripMenuItem";
+            файлToolStripMenuItem.Size = new Size(71, 29);
+            файлToolStripMenuItem.Text = "Файл";
+            // 
+            // открытьToolStripMenuItem
+            // 
+            открытьToolStripMenuItem.BackColor = Color.Orchid;
+            открытьToolStripMenuItem.Name = "открытьToolStripMenuItem";
+            открытьToolStripMenuItem.Size = new Size(187, 30);
+            открытьToolStripMenuItem.Text = "Открыть";
+            открытьToolStripMenuItem.Click += btnLoad_Click;
+            // 
+            // сохранитьToolStripMenuItem
+            // 
+            сохранитьToolStripMenuItem.BackColor = Color.Orchid;
+            сохранитьToolStripMenuItem.Name = "сохранитьToolStripMenuItem";
+            сохранитьToolStripMenuItem.Size = new Size(187, 30);
+            сохранитьToolStripMenuItem.Text = "Сохранить";
+            сохранитьToolStripMenuItem.Click += btnSave_Click;
+            // 
+            // очиститьTobtnSelectColorolStripMenuItem
+            // 
+            очиститьTobtnSelectColorolStripMenuItem.Name = "очиститьTobtnSelectColorolStripMenuItem";
+            очиститьTobtnSelectColorolStripMenuItem.Size = new Size(104, 29);
+            очиститьTobtnSelectColorolStripMenuItem.Text = "Очистить";
+            очиститьTobtnSelectColorolStripMenuItem.Click += btnClearCanvas_Click;
+            // 
+            // плагToolStripMenuItem
+            // 
+            плагToolStripMenuItem.Name = "плагToolStripMenuItem";
+            плагToolStripMenuItem.Size = new Size(86, 29);
+            плагToolStripMenuItem.Text = "Плагин";
+            плагToolStripMenuItem.Click += btnInstallPlugin_Click;
+            // 
+            // btnSelectColor
+            // 
+            btnSelectColor.Name = "btnSelectColor";
+            btnSelectColor.Size = new Size(67, 29);
+            btnSelectColor.Text = "Цвет";
+            btnSelectColor.Click += btnSelectColor_Click;
             // 
             // MainForm
             // 
@@ -203,31 +210,38 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Thistle;
             ClientSize = new Size(1082, 753);
-            Controls.Add(panel1);
+            Controls.Add(flowPanel);
             Controls.Add(canvas);
+            MainMenuStrip = menuStrip1;
             MaximizeBox = false;
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "ООТПиСП ЛБ3 451003 Харкевич";
             ((System.ComponentModel.ISupportInitialize)canvas).EndInit();
-            panel1.ResumeLayout(false);
+            flowPanel.ResumeLayout(false);
+            flowPanel.PerformLayout();
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
             ResumeLayout(false);
         }
 
         #endregion
 
         private PictureBox canvas;
-        private Panel panel1;
         private Button btnElipse;
         private Button btnSquare;
         private Button btnCircle;
         private Button btnRectangle;
         private Button btnLine;
         private Button btnTriangle;
-        private Button btnClearCanvas;
-        private Button btnSelectColor;
         private ColorDialog colorDialog;
-        private Button btnLoad;
-        private Button btnSave;
+        private FlowLayoutPanel flowPanel;
+        private MenuStrip menuStrip1;
+        private ToolStripMenuItem файлToolStripMenuItem;
+        private ToolStripMenuItem открытьToolStripMenuItem;
+        private ToolStripMenuItem сохранитьToolStripMenuItem;
+        private ToolStripMenuItem очиститьTobtnSelectColorolStripMenuItem;
+        private ToolStripMenuItem плагToolStripMenuItem;
+        private ToolStripMenuItem btnSelectColor;
     }
 }
