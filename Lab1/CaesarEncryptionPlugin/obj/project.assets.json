@@ -36,11 +36,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\5\\HexagonPlugin\\HexagonPlugin.csproj",
-      "projectName": "HexagonPlugin",
-      "projectPath": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\5\\HexagonPlugin\\HexagonPlugin.csproj",
+      "projectUniqueName": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\5\\CaesarEncryptionPlugin\\CaesarEncryptionPlugin.csproj",
+      "projectName": "CaesarEncryptionPlugin",
+      "projectPath": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\5\\CaesarEncryptionPlugin\\CaesarEncryptionPlugin.csproj",
       "packagesPath": "C:\\Users\\Ma__sh__ka\\.nuget\\packages\\",
-      "outputPath": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\5\\HexagonPlugin\\obj\\",
+      "outputPath": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\5\\CaesarEncryptionPlugin\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
