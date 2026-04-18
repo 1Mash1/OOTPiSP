@@ -36,11 +36,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\5\\HexagonPlugin\\HexagonPlugin.csproj",
+      "projectUniqueName": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\6\\HexagonPlugin\\HexagonPlugin.csproj",
       "projectName": "HexagonPlugin",
-      "projectPath": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\5\\HexagonPlugin\\HexagonPlugin.csproj",
+      "projectPath": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\6\\HexagonPlugin\\HexagonPlugin.csproj",
       "packagesPath": "C:\\Users\\Ma__sh__ka\\.nuget\\packages\\",
-      "outputPath": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\5\\HexagonPlugin\\obj\\",
+      "outputPath": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\6\\HexagonPlugin\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -61,8 +61,8 @@
         "net8.0-windows7.0": {
           "targetAlias": "net8.0-windows",
           "projectReferences": {
-            "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\5\\2\\2.csproj": {
-              "projectPath": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\5\\2\\2.csproj"
+            "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\6\\2\\2.csproj": {
+              "projectPath": "D:\\БГУИР МАША\\2 КУРС\\ООТПиСП\\ЛБ\\6\\2\\2.csproj"
             }
           }
         }
