@@ -48,6 +48,7 @@
             btnSelectColor = new ToolStripMenuItem();
             encryptionToolStripMenuItem = new ToolStripMenuItem();
             отключитьToolStripMenuItem = new ToolStripMenuItem();
+            отменаToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)canvas).BeginInit();
             flowPanel.SuspendLayout();
             menuStrip1.SuspendLayout();
@@ -71,7 +72,7 @@
             // 
             btnTriangle.BackColor = Color.LightSkyBlue;
             btnTriangle.Image = Properties.Resources.triangle;
-            btnTriangle.Location = new Point(873, 3);
+            btnTriangle.Location = new Point(971, 3);
             btnTriangle.Name = "btnTriangle";
             btnTriangle.Size = new Size(60, 60);
             btnTriangle.TabIndex = 5;
@@ -82,7 +83,7 @@
             // 
             btnElipse.BackColor = Color.LightSkyBlue;
             btnElipse.Image = Properties.Resources.elipse;
-            btnElipse.Location = new Point(1005, 3);
+            btnElipse.Location = new Point(69, 69);
             btnElipse.Name = "btnElipse";
             btnElipse.Size = new Size(60, 60);
             btnElipse.TabIndex = 4;
@@ -93,7 +94,7 @@
             // 
             btnSquare.BackColor = Color.LightSkyBlue;
             btnSquare.Image = Properties.Resources.square;
-            btnSquare.Location = new Point(807, 3);
+            btnSquare.Location = new Point(905, 3);
             btnSquare.Name = "btnSquare";
             btnSquare.Size = new Size(60, 60);
             btnSquare.TabIndex = 3;
@@ -105,7 +106,7 @@
             btnCircle.BackColor = Color.LightSkyBlue;
             btnCircle.ForeColor = Color.White;
             btnCircle.Image = Properties.Resources.circle;
-            btnCircle.Location = new Point(741, 3);
+            btnCircle.Location = new Point(839, 3);
             btnCircle.Name = "btnCircle";
             btnCircle.Size = new Size(60, 60);
             btnCircle.TabIndex = 2;
@@ -116,7 +117,7 @@
             // 
             btnRectangle.BackColor = Color.LightSkyBlue;
             btnRectangle.Image = Properties.Resources.rectangle;
-            btnRectangle.Location = new Point(939, 3);
+            btnRectangle.Location = new Point(3, 69);
             btnRectangle.Name = "btnRectangle";
             btnRectangle.Size = new Size(60, 60);
             btnRectangle.TabIndex = 1;
@@ -127,7 +128,7 @@
             // 
             btnLine.BackColor = Color.LightSkyBlue;
             btnLine.Image = Properties.Resources.diagonal_line;
-            btnLine.Location = new Point(675, 3);
+            btnLine.Location = new Point(773, 3);
             btnLine.Name = "btnLine";
             btnLine.Size = new Size(60, 60);
             btnLine.TabIndex = 0;
@@ -155,10 +156,10 @@
             menuStrip1.BackColor = Color.Orchid;
             menuStrip1.Font = new Font("Comic Sans MS", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
             menuStrip1.ImageScalingSize = new Size(20, 20);
-            menuStrip1.Items.AddRange(new ToolStripItem[] { файлToolStripMenuItem, очиститьTobtnSelectColorolStripMenuItem, плагToolStripMenuItem, btnSelectColor, encryptionToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { файлToolStripMenuItem, очиститьTobtnSelectColorolStripMenuItem, плагToolStripMenuItem, btnSelectColor, encryptionToolStripMenuItem, отменаToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(672, 36);
+            menuStrip1.Size = new Size(770, 36);
             menuStrip1.TabIndex = 11;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -239,6 +240,13 @@
             отключитьToolStripMenuItem.Text = "Отключить";
             отключитьToolStripMenuItem.Click += отключитьToolStripMenuItem_Click;
             // 
+            // отменаToolStripMenuItem
+            // 
+            отменаToolStripMenuItem.Name = "отменаToolStripMenuItem";
+            отменаToolStripMenuItem.Size = new Size(98, 32);
+            отменаToolStripMenuItem.Text = "Отмена";
+            отменаToolStripMenuItem.Click += отменаToolStripMenuItem_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -282,5 +290,6 @@
         private ToolStripMenuItem отключитьToolStripMenuItem;
         private ToolStripMenuItem загрузитьФигуруToolStripMenuItem;
         private ToolStripMenuItem зашрузитьФункционалToolStripMenuItem;
+        private ToolStripMenuItem отменаToolStripMenuItem;
     }
 }

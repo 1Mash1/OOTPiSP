@@ -1,25 +1,31 @@
-﻿namespace MyShape
+﻿public class ShapeList
 {
-    class ShapeList
+    private List<Shape> shapes = new List<Shape>(); // Internal storage for all shapes on the canvas
+
+    public event Action OnChanged; // Event triggered to notify the UI to repaint
+
+    public void Add(Shape shape)
     {
-        private List<Shape> list = new List<Shape>(); // Internal storage for shapes
-
-        public void Add(Shape shape) // Adds a new shape to the collection
-        {
-            list.Add(shape);
-        }
-
-        public List<Shape> GetList() // Returns the full list of shapes
-        {
-            return list;
-        }
-
-        public void DrawAll(Graphics graphics)
-        {
-            foreach (var shape in list)
-            {
-                shape.DrawStrategy.Draw(graphics, shape); // Polymorphic call: how to draw the shape
-            }
-        }
+        shapes.Add(shape);     // Adds a shape to the collection
+        OnChanged?.Invoke();   // Notifies listeners that the list has changed
     }
+
+    public void Remove(Shape shape)
+    {
+        shapes.Remove(shape);  // Removes a specific shape from the collection
+        OnChanged?.Invoke();   // Notifies listeners to refresh the view
+    }
+
+    public void Clear()
+    {
+        shapes.Clear();        // Removes all shapes from the list
+        OnChanged?.Invoke();   // Notifies listeners that the canvas is now empty
+    }
+
+    public void NotifyUpdate()
+    {
+        OnChanged?.Invoke();   // Manually triggers a UI refresh (e.g., after color change)
+    }
+
+    public List<Shape> GetList() => shapes; // Returns the current list of shapes
 }

@@ -12,6 +12,7 @@
         private ResizeHandle activeResizeHandle = ResizeHandle.None; // Stores which handle is currently grabbed                                                          
         private List<IDataProcessorPlugin> dataPlugins = new List<IDataProcessorPlugin>(); // List of all loaded encryption/processing plugins
         private IDataProcessorPlugin activeProcessor = null; // Currently selected plugin for file processing (null if none)
+        private CommandManager commandManager = new CommandManager(); // Handles execution and history of user actions for undo support
 
         // Strategy dictionary to link shapes with their drawing behavior
         private Dictionary<Type, IDrawStrategy> shapeStrategies = new Dictionary<Type, IDrawStrategy> // Maps types to strategies
@@ -44,6 +45,7 @@
             btnSquare.Tag = new SquareFactory();
             btnElipse.Tag = new ElipseFactory();
             btnTriangle.Tag = new TriangleFactory();
+            globalShapeList.OnChanged += () => canvas.Invalidate();
         }
 
         private void OnShapeButtonClick(object sender, EventArgs args)
@@ -162,9 +164,9 @@
             activeResizeHandle = ResizeHandle.None; // Reset the active handle
             if (previewShape != null) // If a new shape was being drawn
             {
-                globalShapeList.Add(previewShape); // Add the completed shape to the list
-                previewShape = null; // Clear the preview reference
-                canvas.Invalidate(); // Final refresh of the canvas
+                var command = new AddShapeCommand(globalShapeList, previewShape);
+                commandManager.ExecuteCommand(command);
+                previewShape = null;
             }
         }
         private void canvas_Paint(object sender, PaintEventArgs paintArgs)
@@ -238,26 +240,34 @@
 
         private void btnClearCanvas_Click(object sender, EventArgs args)
         {
-            if (selectedShape != null) // If a shape is selected
+            if (selectedShape != null)
             {
-                globalShapeList.GetList().Remove(selectedShape); // Remove only the selected shape
-                selectedShape = null; // Clear selection reference
+                var command = new RemoveShapeCommand(globalShapeList, selectedShape);
+                commandManager.ExecuteCommand(command);
+                selectedShape = null;
             }
-            else // If nothing is selected
-                globalShapeList.GetList().Clear(); // Clear the entire list
-            canvas.Invalidate(); // Refresh canvas
+            else if (globalShapeList.GetList().Count > 0)
+            {
+                var command = new RemoveShapeCommand(globalShapeList);
+                commandManager.ExecuteCommand(command);
+            }
         }
 
         private void btnSelectColor_Click(object sender, EventArgs args)
         {
-            if (colorDialog.ShowDialog() == DialogResult.OK) // If user clicked OK in the dialog
+            if (colorDialog.ShowDialog() == DialogResult.OK)
             {
-                selectedColor = colorDialog.Color; // Update global selected color
-                btnSelectColor.BackColor = selectedColor; // Update button background to show choice
-                if (selectedShape != null) // If a shape is currently selected
+                Color newColor = colorDialog.Color;
+                if (selectedShape != null)
                 {
-                    selectedShape.color = selectedColor; // Change color of the selected shape
-                    canvas.Invalidate(); // Refresh canvas to update shape color
+                    if (selectedShape.color.ToArgb() == newColor.ToArgb())
+                    {
+                        return;
+                    }
+                    var command = new ChangeColorCommand(globalShapeList, selectedShape, newColor);
+                    commandManager.ExecuteCommand(command);
+                    selectedColor = newColor;
+                    btnSelectColor.BackColor = selectedColor;
                 }
             }
         }
@@ -370,7 +380,6 @@
                 }
             }
         }
-
         private bool IsPluginSecure(string dllPath)
         {
             bool isCorrect = true;
@@ -426,47 +435,123 @@
 
             return isCorrect;
         }
+
         private void отключитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
             activeProcessor = null;
             MessageBox.Show("Шифрование отключено. Файлы будут сохраняться в обычном виде.");
         }
 
+        private void RegisterInternalPlugin(Type type)
+        {
+            IPlugin plugin = (IPlugin)Activator.CreateInstance(type); // Creates an instance of the plugin from the provided type
+            Shape sampleShape = plugin.GetFactory().Create(); // Generates a sample shape to determine its type
+            Type shapeType = sampleShape.GetType(); // Gets the specific class type of the shape
+            if (!factoryRegistry.ContainsKey(shapeType.Name)) // Checks if this shape type is already registered
+            {
+                factoryRegistry.Add(shapeType.Name, plugin.GetFactory()); // Maps the shape name to its factory
+                shapeStrategies.Add(shapeType, plugin.GetStrategy()); // Maps the shape type to its drawing strategy
+                AddPluginButton(plugin); // Creates a UI button for the new shape
+                MessageBox.Show($"Фигура {shapeType.Name} успешно добавлена!"); // Notifies the user of a successful load
+            }
+        }
+
         private void loadShapeMenuItem_Click(object sender, EventArgs e)
         {
-            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            using (OpenFileDialog openFileDialog = new OpenFileDialog()) // Opens a dialog to select a file
             {
-                openFileDialog.Filter = "DLL files (*.dll)|*.dll";
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                openFileDialog.Filter = "DLL files (*.dll)|*.dll"; // Sets the file extension filter to DLL only
+                if (openFileDialog.ShowDialog() == DialogResult.OK) // Proceeds if the user selects a file and clicks OK
                 {
-                    if (!IsPluginSecure(openFileDialog.FileName))
-                        return;
+                    if (!IsPluginSecure(openFileDialog.FileName)) // Validates the security of the selected plugin file
+                        return; // Aborts if the plugin fails the security check
                     try
                     {
-                        var assembly = System.Reflection.Assembly.LoadFrom(openFileDialog.FileName);
-                        foreach (Type type in assembly.GetTypes())
+                        var assembly = System.Reflection.Assembly.LoadFrom(openFileDialog.FileName); // Loads the assembly from the file path
+                        bool anyPluginLoaded = false; // Flag to track if at least one valid plugin was found
+                        foreach (Type type in assembly.GetTypes()) // Iterates through all classes within the loaded DLL
                         {
+                            // Checks if the class implements IPlugin and is a concrete class
                             if (typeof(IPlugin).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
                             {
-                                IPlugin plugin = (IPlugin)Activator.CreateInstance(type);
-                                Shape sampleShape = plugin.GetFactory().Create();
-                                Type shapeType = sampleShape.GetType();
-                                if (!factoryRegistry.ContainsKey(shapeType.Name))
-                                {
-                                    factoryRegistry.Add(shapeType.Name, plugin.GetFactory());
-                                    if (!shapeStrategies.ContainsKey(shapeType))
-                                    {
-                                        shapeStrategies.Add(shapeType, plugin.GetStrategy());
-                                    }
-                                    AddPluginButton(plugin);
-                                    MessageBox.Show($"Фигура {shapeType.Name} успешно добавлена!");
-                                }
+                                RegisterInternalPlugin(type); // Adds the compatible plugin to the system
+                                anyPluginLoaded = true; // Marks that a plugin was successfully loaded
                             }
                         }
+                        if (!anyPluginLoaded)
+                            anyPluginLoaded = TryAdaptForeignDll(assembly); // Attempts to use an adapter if no native plugins were found
+                        if (!anyPluginLoaded)
+                            MessageBox.Show("Ошибка: неверные даннные!"); // Shows an error if the DLL is incompatible
                     }
-                    catch (Exception ex) { MessageBox.Show("Ошибка загрузки фигуры: " + ex.Message); }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Ошибка загрузки плагина: " + ex.Message); // Handles unexpected errors during loading
+                    }
                 }
             }
+        }
+
+        private bool TryAdaptForeignDll(System.Reflection.Assembly foreignAssembly)
+        {
+            try
+            {
+                var allTypes = foreignAssembly.GetTypes(); // Retrieves all types defined in the external DLL
+                // Looks for a class responsible for creating shapes
+                var fFactoryType = allTypes.FirstOrDefault(t =>
+                    t.Name.Contains("Factory") && !t.IsInterface && !t.IsAbstract);
+                // Looks for a class responsible for rendering shapes
+                var fRendererType = allTypes.FirstOrDefault(t =>
+                    t.Name.Contains("Renderer") && !t.IsInterface && !t.IsAbstract);
+                if (fFactoryType == null)
+                {
+                    // Search for any class that has a specific creation method
+                    fFactoryType = allTypes.FirstOrDefault(t =>
+                        !t.IsInterface && !t.IsAbstract && t.GetMethod("CreateFromPoints") != null);
+                }
+                if (fFactoryType == null || fRendererType == null)
+                    return false; 
+                var createMethod = fFactoryType.GetMethod("CreateFromPoints"); // Finds the foreign creation method via reflection
+                var renderMethod = fRendererType.GetMethod("Render"); // Finds the foreign rendering method via reflection
+                if (createMethod == null || renderMethod == null)
+                    return false; 
+                var adapterAssembly = System.Reflection.Assembly.LoadFrom("Adapter.dll"); // Loads the local adapter helper library
+                var adapterStrategyType = adapterAssembly.GetType("Adapter.UniversalAdapterStrategy"); // Gets the adapter strategy type
+                var adapterFactoryType = adapterAssembly.GetType("Adapter.AdaptedFactory"); // Gets the adapter factory type
+                var adaptedShapeType = adapterAssembly.GetType("Adapter.AdaptedShape"); // Gets the bridge shape type
+                if (adapterStrategyType == null || adapterFactoryType == null || adaptedShapeType == null)
+                {
+                    MessageBox.Show("Не удалось загрузить типы из Adapter.dll!"); 
+                    return false;
+                }
+                object fFactoryInstance = Activator.CreateInstance(fFactoryType); // Instantiates the foreign factory
+                object fRendererInstance = Activator.CreateInstance(fRendererType); // Instantiates the foreign renderer
+                // Links the foreign logic into our system using the Universal Adapter
+                object adapterStrategy = Activator.CreateInstance(adapterStrategyType,
+                    fFactoryInstance, createMethod, fRendererInstance, renderMethod);
+                object adapterFactory = Activator.CreateInstance(adapterFactoryType);
+                string displayName = fFactoryType.Name.Replace("Factory", ""); // Cleans up the name for the UI button
+                if (!factoryRegistry.ContainsKey(displayName))
+                {
+                    factoryRegistry.Add(displayName, (ShapeFactory)adapterFactory); // Registers the adapted factory
+                    shapeStrategies[adaptedShapeType] = (IDrawStrategy)adapterStrategy; // Registers the adapted strategy
+                    Button btn = new Button // Creates a UI button for the adapted foreign shape
+                    {
+                        Text = displayName,
+                        Width = 50,
+                        Height = 50,
+                        BackColor = Color.LightBlue
+                    };
+                    btn.Click += (s, e) => activeShapeFactory = (ShapeFactory)adapterFactory; // Sets the factory on click
+                    flowPanel.Controls.Add(btn); // Adds the button to the UI panel
+                    MessageBox.Show($"Плагин {displayName} успешно адаптирован!"); // Success notification
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка адаптации: " + ex.Message); // Handles reflection or instantiation errors
+            }
+            return false;
         }
 
         private void loadFuncMenuItem_Click(object sender, EventArgs e)
@@ -512,6 +597,11 @@
                     catch (Exception ex) { MessageBox.Show("Ошибка загрузки шифрования: " + ex.Message); }
                 }
             }
+        }
+
+        private void отменаToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            commandManager.Undo();
         }
     }
 
